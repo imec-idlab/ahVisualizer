@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="/js/libs/jquery-1.11.0.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="/js/libs/highcharts/highcharts.js"></script>
+    <script src="/js/libs/highcharts/highcharts-more.js"></script>
+    <script src="/js/libs/highcharts/exporting.js"></script>
+    <script src="/js/libs/highcharts/export-csv.js"></script>
+    <!--<script src="/js/libs/highcharts/offline-exporting.js"></script>-->
+    <script src="/js/libs/select2.min.js"></script>
+
+    <script src="/js/libs/sql.js"></script>
+
+    <script src="/js/custom/analyzecsv.js"></script>
+
+    <link rel="stylesheet" href="/css/bootstrap.css" />
+    <link rel="stylesheet" href="/css/bootstrap-theme.css" />
+    <link rel="stylesheet" href="/css/select2.css" />
+    <!--<link rel="stylesheet" href="/css/select2-bootstrap.css" />-->
+
+    <style>
+        .highcharts-tooltip table {
+            font-size: 1em;
+        }
+        
+        .form-group {
+            margin-bottom: 5px;
+        }
+        
+        .panel {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">1. Load csv file to analyze</h3>
+                        </div>
+                        <div class="panel-body">
+                            <input type="file" id="csvFileInput" accept=".csv">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">2. Chart options</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="ddlSeries" class="col-sm-3 control-label">Series</label>
+                                    <div class="col-sm-9">
+                                        <select id="ddlSeries" class="form-control ddl" multiple></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ddlXValues" class="col-sm-3 control-label">X values</label>
+                                    <div class="col-sm-9">
+                                        <select id="ddlXValues" class="form-control ddl"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ddlYValues" class="col-sm-3 control-label">Y values</label>
+                                    <div class="col-sm-9">
+                                        <select id="ddlYValues" class="form-control ddl"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ddlTag" class="col-sm-3 control-label">Tag</label>
+                                    <div class="col-sm-9">
+                                        <select id="ddlTag" class="form-control ddl"></select>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">3. Fixed values</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form id="frmFixedValues" class="form-horizontal">
+                                No fixed values
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">4. Generate</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal">
+
+                                <div class="checkbox">
+                                    <label>
+                                        <input id="chkConnectPoints" type="checkbox">Connect points
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="button" id="btnRender" class="btn btn-default">Generate</button>
+                                        <button type="button" id="btnCreateDB" class="btn btn-default">Create sqlite file</button>
+                                    </div>
+                                    <div id="sqlGenerateProgressBar" class="progress" style="display:none;width:100%">
+                                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                                              <span class="sr-only"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Chart</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="chartContainer" style="width:100%; height: 500px; margin: 0 auto">
+                        </div>
+
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Box plot of series</h3>
+                    </div>
+                    <div class="panel-body">
+                        <label for="ddlBoxPlotSeries">Series</label>
+                        <select id="ddlBoxPlotSeries" class="form-control"></select>
+                        <div id="boxPlotContainer" style="width:100%; height: 500px; margin: 0 auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

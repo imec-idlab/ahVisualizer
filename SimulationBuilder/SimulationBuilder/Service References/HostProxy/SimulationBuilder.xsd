@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/SimulationBuilder" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/SimulationBuilder" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="SimulationJob">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="FinalArguments" nillable="true" type="q1:ArrayOfKeyValueOfstringstring" />
+      <xs:element minOccurs="0" name="Index" type="xs:int" />
+      <xs:element minOccurs="0" name="SimulationBatchGUID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TotalNrOfSimulations" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SimulationJob" nillable="true" type="tns:SimulationJob" />
+</xs:schema>

@@ -1,0 +1,86 @@
+body{
+    background-color:#CCC;
+}
+
+.canvasContainer {
+    position: relative;
+    width:450px;
+    height:450px;
+}
+
+.canvasContainer > canvas {
+    position: absolute;
+     outline: none !important; /*remove focus border */
+}
+
+.chartProperty {
+    cursor: pointer;
+}
+
+.selected {
+    background-color:#CCC;
+}
+
+.scrollTable {
+    max-height:190px;
+    overflow-y:scroll;
+}
+
+.scrollTable th {
+    padding:2px !important;
+    cursor: pointer;
+}
+
+.scrollTable td {
+    padding:2px !important;
+}
+
+.col-fixed-500{
+    width:500px;
+    position:fixed;
+    height:100%;
+}
+
+.col-offset-500 {
+    padding-left:515px !important;
+}
+
+#rdbStreams > input {
+    margin:5px;
+}
+
+#rdbStreams {
+    margin-top: -20px;
+}
+
+.valueup {
+    background-position: center left;
+    background-image: url('/images/arrow_up.png');
+    background-repeat: no-repeat;
+    padding-left:15px;
+    display: inline-block;
+}
+
+.valuedown {
+    background-position: center left;
+    background-image: url('/images/arrow_down.png');
+    background-repeat: no-repeat;
+    padding-left:15px;
+    display: inline-block;
+}
+
+.zscore {
+    width: 7px;
+    height: 7px;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 2px;
+}
+
+.panel {
+    margin-bottom:2px;
+}
+
+.panel-heading {
+    padding: 4px;
+}

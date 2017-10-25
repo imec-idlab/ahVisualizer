@@ -1,0 +1,2 @@
+/usr/local/src/802.11ah-ns3/SimulationBuilder/SimulationBuilder/obj/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/usr/local/src/802.11ah-ns3/SimulationBuilder/SimulationBuilder/obj/Debug/SimulationBuilder.simulationstatuspage.html

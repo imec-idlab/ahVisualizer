@@ -1,0 +1,214 @@
+﻿<html>
+
+<head>
+    <title>Untitled Typescript Snippet</title>
+    <style></style>
+
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div>
+        Started on: <span id="startedOn"></span>
+        <br/> 
+        Average time: <span id="averageTime"></span>
+        <br/>
+        Remaining time: <span id="remainingTime"></span>
+        <br/>
+        Progress: <span id="progress"></span>
+    </div>
+    <canvas id="c" width="800" height="800"></canvas>
+    <script>/// <reference path="https://cdn.rawgit.com/borisyankov/DefinitelyTyped/master/jquery/jquery.d.ts" />
+/// <reference path="https://cdn.rawgit.com/borisyankov/DefinitelyTyped/master/bootstrap/bootstrap.d.ts" />
+var JobStatusEnum;
+(function (JobStatusEnum) {
+    JobStatusEnum[JobStatusEnum["Pending"] = 0] = "Pending";
+    JobStatusEnum[JobStatusEnum["Running"] = 1] = "Running";
+    JobStatusEnum[JobStatusEnum["Finished"] = 2] = "Finished";
+    JobStatusEnum[JobStatusEnum["Failed"] = 3] = "Failed";
+})(JobStatusEnum || (JobStatusEnum = {}));
+$(document).ready(function () {
+    //testGUI();
+    fetchStatus();
+});
+function testGUI() {
+    var s = {
+        SimulationBatchGUID: "",
+        AverageTime: "",
+        NrOfSimulationsDone: 2,
+        StartedOn: "\/Date(1235764800000)\/",
+    };
+    s.JobStatus = [];
+    for (var i = 0; i < 510; i++) {
+        s.JobStatus.push(Math.floor(Math.random() * 4));
+    }
+    s.TotalNrOfSimulations = s.JobStatus.length;
+    updateGUI(s);
+}
+function fetchStatus() {
+    $.getJSON("GetStatus", function (data) {
+        updateGUI(data);
+        window.setTimeout(fetchStatus, 1000);
+    }).fail(function () {
+        window.setTimeout(fetchStatus, 1000);
+    });
+}
+function updateGUI(status) {
+    $("#startedOn").text(new Date(parseInt(status.StartedOn.match(/\/Date\(([0-9]+)(?:.*)\)\//)[1])).toString());
+    $("#averageTime").text(status.AverageTime);
+    $("#remainingTime").text(status.RemainingTime);
+    var c = $("#c").get(0);
+    var ctx = c.getContext("2d");
+    var cellWidth = 8;
+    var cellHeight = 8;
+    var nrCols = Math.floor(c.width / cellWidth);
+    var diffStatus = [0, 0, 0, 0];
+    ctx.clearRect(0, 0, c.width, c.height);
+    for (var i = 0; i < status.JobStatus.length; i++) {
+        diffStatus[status.JobStatus[i]]++;
+        var x = i % nrCols;
+        var y = Math.floor(i / nrCols);
+        var color = "#FFFFFF";
+        var bordercolor = "#FFFFFF";
+        if (status.JobStatus[i] == JobStatusEnum.Pending) {
+            color = "#DDDDDD";
+            bordercolor = "#AAAAAA";
+        }
+        else if (status.JobStatus[i] == JobStatusEnum.Running) {
+            color = "#ffbb33";
+            bordercolor = "#cc9911";
+        }
+        else if (status.JobStatus[i] == JobStatusEnum.Finished) {
+            color = "#aaff33";
+            bordercolor = "#887700";
+        }
+        else if (status.JobStatus[i] == JobStatusEnum.Failed) {
+            color = "#ff6666";
+            bordercolor = "#dd4444";
+        }
+        ctx.fillStyle = color;
+        ctx.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
+        ctx.strokeStyle = bordercolor;
+        ctx.beginPath();
+        ctx.rect(x * cellWidth + 0.5, y * cellHeight + 0.5, cellWidth, cellHeight);
+        ctx.stroke();
+    }
+    $("#progress").text(status.NrOfSimulationsDone + "/" + status.TotalNrOfSimulations + " (Running:" + diffStatus[JobStatusEnum.Running] + " | Failed:" + diffStatus[JobStatusEnum.Failed] + " | | Pending:" + diffStatus[JobStatusEnum.Pending] + ")");
+}
+//# sourceMappingURL=temp.js.map</script>
+<script id='_typescriptCode' type='text/typescript'> 
+/// <reference path="https://cdn.rawgit.com/borisyankov/DefinitelyTyped/master/jquery/jquery.d.ts" />
+/// <reference path="https://cdn.rawgit.com/borisyankov/DefinitelyTyped/master/bootstrap/bootstrap.d.ts" />
+
+interface Status {
+    SimulationBatchGUID: string;
+    AverageTime: string;
+    RemainingTime: string;
+    NrOfSimulationsDone: number;
+    TotalNrOfSimulations: number;
+    JobStatus: JobStatusEnum[];
+    StartedOn: string;
+}
+enum JobStatusEnum {
+    Pending = 0,
+    Running = 1,
+    Finished = 2,
+    Failed = 3
+}
+
+$(document).ready(function() {
+
+    //testGUI();
+    fetchStatus();
+});
+
+function testGUI() {
+    
+    let s = <Status>{
+        SimulationBatchGUID: "",
+        AverageTime: "",
+        NrOfSimulationsDone: 2,
+        StartedOn: "\/Date(1235764800000)\/",
+    };
+    s.JobStatus = [];
+    for (let i: number = 0; i < 510; i++) {
+        s.JobStatus.push(Math.floor(Math.random() * 4));
+    }
+    s.TotalNrOfSimulations = s.JobStatus.length;
+
+    updateGUI(s);
+
+}
+
+function fetchStatus() {
+    $.getJSON("GetStatus", (data) => {
+
+        updateGUI(data);
+
+        window.setTimeout(fetchStatus, 1000);
+    }).fail(function() {
+        window.setTimeout(fetchStatus, 1000);
+    });
+}
+
+
+function updateGUI(status: Status) {
+    $("#startedOn").text(new Date(parseInt(status.StartedOn.match(/\/Date\(([0-9]+)(?:.*)\)\//)[1])).toString());
+    $("#averageTime").text(status.AverageTime);
+    $("#remainingTime").text(status.RemainingTime);
+
+
+    let c = (<HTMLCanvasElement>$("#c").get(0));
+    let ctx = c.getContext("2d");
+
+
+    let cellWidth = 8;
+    let cellHeight = 8;
+
+    let nrCols = Math.floor(c.width / cellWidth);
+
+    let diffStatus = [0, 0, 0, 0];
+    ctx.clearRect(0, 0, c.width, c.height);
+    for (let i: number = 0; i < status.JobStatus.length; i++) {
+
+        diffStatus[status.JobStatus[i]]++;
+
+        let x = i % nrCols;
+        let y = Math.floor(i / nrCols);
+
+        let color = "#FFFFFF";
+        let bordercolor = "#FFFFFF";
+        if (status.JobStatus[i] == JobStatusEnum.Pending) {
+            color = "#DDDDDD";
+            bordercolor = "#AAAAAA";
+        }
+        else if (status.JobStatus[i] == JobStatusEnum.Running) {
+            color = "#ffbb33";
+            bordercolor = "#cc9911";
+        }
+        else if (status.JobStatus[i] == JobStatusEnum.Finished) {
+            color = "#aaff33";
+            bordercolor = "#887700";
+        }
+        else if (status.JobStatus[i] == JobStatusEnum.Failed) {
+            color = "#ff6666";
+            bordercolor = "#dd4444";
+        }
+
+
+        ctx.fillStyle = color;
+        ctx.fillRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
+        ctx.strokeStyle = bordercolor;
+        ctx.beginPath();
+        ctx.rect(x * cellWidth + 0.5, y * cellHeight + 0.5, cellWidth, cellHeight);
+        ctx.stroke();
+    }
+
+    $("#progress").text(`${status.NrOfSimulationsDone}/${status.TotalNrOfSimulations} (Running:${diffStatus[JobStatusEnum.Running]} | Failed:${diffStatus[JobStatusEnum.Failed]} | | Pending:${diffStatus[JobStatusEnum.Pending]})`);
+}
+</script>
+</body>
+
+</html>

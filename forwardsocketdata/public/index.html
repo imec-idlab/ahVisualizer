@@ -1,0 +1,658 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="/js/libs/jquery-1.11.0.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="/js/libs/highcharts/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="/js/libs/highcharts/exporting.js"></script>
+    <script src="/js/libs/highcharts/export-csv.js"></script>
+    <!--<script src="/js/libs/highcharts/offline-exporting.js"></script>-->
+
+    <script src="/js/libs/bootstrap.js"></script>
+    <script src="/js/custom/index/main.js"></script>
+
+    <link rel="stylesheet" href="/css/bootstrap.css" />
+    <link rel="stylesheet" href="/css/bootstrap-theme.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 col-offset-500">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Simulation - <span id="simulationName">Untitled</span></h3>
+                                <div class="pull-right">
+                                    <div id="rdbStreams">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="scrollTable">
+                                            <table class="table">
+                                                <tr>
+                                                    <td>Current time [ms]</td>
+                                                    <td id="simCurrentTime">---</td>
+                                                </tr>
+
+                                                <tr class="chartProperty" data-property="channelTraffic">
+                                                    <td>Channel Traffic</td>
+                                                    <td id="simChannelTraffic">---</td>
+                                                </tr>
+                                                <tr class="chartProperty" data-property="totalPacketLoss">
+                                                    <td>Total Packet Loss</td>
+                                                    <td id="simTotalPacketLoss">---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="trafficInterval">
+                                                    <td>Traffic interval [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="trafficIntervalDeviation">
+                                                    <td>Traffic interval deviation [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="trafficPacketsize">
+                                                    <td>Traffic Packet size [bytes]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="trafficType">
+                                                    <td>Traffic Type</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="dataMode">
+                                                    <td>Data Mode <a target="_blank" href="https://raw.githubusercontent.com/drake7707/802.11ah-ns3/master/MCStoWifiMode">?</a></td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="propagationLossExponent">
+                                                    <td>Propagation exponent</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="propagationLossReferenceLoss">
+                                                    <td>Propagation ref. loss</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="maxTimeOfPacketsInQueue">
+                                                    <td>Max. time of packets in MAC Queue [s]</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="configProperty" data-property="ipCameraMotionPercentage">
+                                                    <td>IP Camera Motion Probability per second</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="ipCameraMotionDuration">
+                                                    <td>IP Camera Motion Duration [s]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="firmwareSize">
+                                                    <td>Firmware size [bytes]</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="configProperty" data-property="firmwareBlockSize">
+                                                    <td>Firmware block size [bytes]</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="configProperty" data-property="firmwareCorruptionProbability">
+                                                    <td>Firmware corruption probability</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="configProperty" data-property="firmwareNewUpdateProbability">
+                                                    <td>Firmware new update probability</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="configProperty" data-property="sensorMeasurementSize">
+                                                    <td>Sensor measurement size [bytes]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="cooldownPeriod">
+                                                    <td>Cooldown period [s]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="scrollTable">
+                                            <table class="table" id="RawConfig">
+                                                <tr class="configProperty" data-property="beaconInterval">
+                                                    <td>Beacon interval [µs]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="numRpsElements">
+                                                    <td>Number of RPS elements</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="apAlwaysSchedulesForNextSlot">
+                                                    <td>AP always schedules for next slot</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="AIDRAWRange">
+                                                    <td>AID RAW range</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="numberOfRAWGroups">
+                                                    <td>Number of RAW groups</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="RAWSlotFormat">
+                                                    <td>RAW Slot format</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="numberOfRAWSlots">
+                                                    <td>Number of backoff slots in RAW</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="RAWSlotCount">
+                                                    <td>RAW Slot Count</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="RAWSlotDuration">
+                                                    <td>RAW Slot Duration [µs]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="nrSta">
+                                                    <td>Number of stations</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="contentionPerRAWSlot">
+                                                    <td>Contention per RAW slot</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="contentionPerRAWSlotOnlyInFirstGroup">
+                                                    <td>Contention per RAW slot only in first group</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="configProperty" data-property="minRTO">
+                                                    <td>Minimum TCP retransmission timeout (RTO)</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="tcpSegmentSize">
+                                                    <td>TCP Segment size [bytes]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="tcpInitialSlowStartThreshold">
+                                                    <td>TCP Initial slow start threshold [segments]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="configProperty" data-property="tcpInitialCWnd">
+                                                    <td>TCP Initial Congestion window [segments]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" id="nodeTitle"></h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="scrollTable" style="max-height: 280px;">
+                                            <table class="table">
+
+                                                <tr class="header">
+                                                    <th colspan="2"><span>-</span> General</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>Position</td>
+                                                    <td id="nodePosition">---</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Association ID, RPS, RAW group and RAW slot</td>
+                                                    <td><span id="nodeAID">---</span> (rps: <span id="nodeRpsIndex">---</span>)(grp: <span id="nodeGroupNumber">---</span>)
+                                                        (slot: <span id="nodeRawSlotIndex">---</span>)</td>
+                                                </tr>
+
+
+                                                <!-- use data-max="*" to automatically determine the max value present -->
+
+                                                <tr class="header">
+                                                    <th colspan="2"><span>-</span> Performance</th>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-max="*" data-min="0" data-property="goodputKbit" data-type="HIGHER_IS_BETTER">
+                                                    <td>Throughput [Kbit/s]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="nrOfSentPackets">
+                                                    <td>Number of sent packets</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="nrOfSuccessfulPackets">
+                                                    <td>Number of succ. packets received at AP</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="nrOfSuccessfulRoundtripPackets">
+                                                    <td>Number of succ. echoed packets received </td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-max="*" data-min="0" data-property="latency" data-type="LOWER_IS_BETTER">
+                                                    <td>Latency (time between sent/receive) [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-max="*" data-min="0" data-property="avgSentReceiveTime" data-type="LOWER_IS_BETTER">
+                                                    <td>Average latency [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="avgRoundtripTime" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Average round trip time [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-max="*" data-min="0" data-property="nrOfDroppedPackets" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of dropped/outstanding packets</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-max="*" data-min="0" data-property="numberOfBeaconsMissed" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of missed beacons</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="jitter" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Jitter (deviation from average RTT) [µs]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="reliability" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Packet loss [%]</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="header">
+                                                    <th colspan="2"><span>-</span> Transmission</th>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty selected" data-property="totalTransmitTime">
+                                                    <td>Total transmit time [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="nrOfTransmissions">
+                                                    <td>Number of transmissions</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="nrOfTransmissionsDropped">
+                                                    <td>Number of transmissions dropped</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-max="*" data-min="0" data-property="edcaQueueLength" data-type="LOWER_IS_BETTER">
+                                                    <td>EDCA Queue Length</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfMACTxRTSFailed" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of MAC TX RTS failed</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfMACTxMissedACK" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of MAC TX missed ACK</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberofMACTxMissedACKAndDroppedPacket" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of MAC TX missed ACK and dropped packet</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="interPacketDelayAtServer" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Inter packet delay at server [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="interPacketDelayAtClient" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Inter packet delay at client [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="interPacketDelayDeviationPercentageAtServer" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Inter packet delay deviation from average at server [%]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="interPacketDelayDeviationPercentageAtClient" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Inter packet delay deviation from average at client [%]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfCollisions" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of collisions</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfTransmissionsDuringRAWSlot" data-max="*" data-min="0" data-type="HIGHER_IS_BETTER">
+                                                    <td>Number of transmissions during RAW slot</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfTransmissionsCancelledDueToCrossingRAWBoundary" data-max="*"
+                                                    data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of transmissions cancelled due to crossing RAW boundary</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="header">
+                                                    <th colspan="2"><span>-</span> Reception</th>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="totalReceiveTime">
+                                                    <td>Total receive time [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="totalDozeTime" data-max="*" data-min="0" data-type="HIGHER_IS_BETTER">
+                                                    <td>Total doze time [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="totalActiveTime">
+                                                    <td>Total active time [ms]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="nrOfReceives">
+                                                    <td>Number of RX</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="nrOfReceivesDropped" data-max="*" data-min="*" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of RX dropped</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="nrOfReceivesDroppedByDestination" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of RX dropped by destination</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="header">
+                                                    <th colspan="2"><span>-</span> TCP</th>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="tcpConnected" data-max="1" data-min="0" data-type="HIGHER_IS_BETTER">
+                                                    <td>TCP Socket is connected</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="chartProperty nodeProperty" data-property="tcpCongestionWindow" data-max="*" data-min="0" data-type="HIGHER_IS_BETTER">
+                                                    <td>Congestion window [segments]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="tcpRTO" data-max="*" data-min="0" data-type="HIGHER_IS_BETTER">
+                                                    <td>Retransmission timeout (RTO) [µs]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfTCPRetransmissions" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of TCP Retransmissions</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfTCPRetransmissionsFromAP" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Number of TCP Retransmissions from AP</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="tcpSlowStartThreshold" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Slow start threshold [segments]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="tcpEstimatedBandwidth" data-max="*" data-min="0" data-type="HIGHER_IS_BETTER">
+                                                    <td>Estimated bandwidth [segments]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="tcpRTT" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Round trip time (RTT) [µs]</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="header">
+                                                    <th colspan="2"><span>-</span> AP Packet scheduling</th>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfAPScheduledPacketForNodeInNextSlot" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>Number of AP scheduled packets to next slot</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfAPSentPacketForNodeImmediately" data-max="*" data-min="0" data-type="HIGHER_IS_BETTER">
+                                                    <td>Number of AP packets sent immediately</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="avgRemainingSlotTimeWhenAPSendingInSameSlot" data-max="*" data-min="0"
+                                                    data-type="HIGHER_IS_BETTER">
+                                                    <td>Avg. rem. slot time when sending packets immediately [µs]</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="header">
+                                                    <th colspan="2"><span>-</span> Application</th>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="ipCameraSendingRate" data-max="*" data-min="0" data-type="HIGHER_IS_BETTER">
+                                                    <td>Avg. ip camera sending rate [kbit/s]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="ipCameraReceivingRate" data-max="*" data-min="0" data-type="HIGHER_IS_BETTER">
+                                                    <td>Avg. ip camera receiving rate at AP [kbit/s]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="firmwareTransferTime" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Time it took to transfer firmware completely [µs]</td>
+                                                    <td>---</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="scrollTable" style="max-height: 280px;">
+                                            <table class="table">
+                                                <tr class="chartProperty nodeProperty" data-property="totalNumberOfDrops" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Total nr of drops</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="header">
+                                                    <th colspan="2"><span>-</span> Drop Reasons at station</th>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonUnknown" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Unknown</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonPhyInSleepMode" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>In sleep mode</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonPhyNotEnoughSignalPower" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>Not enough signal power</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonPhyPreambleHeaderReceptionFailed" data-max="*"
+                                                    data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Preamble header reception failed</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonPhyRxDuringChannelSwitching" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>Reception during channel switching</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonPhyAlreadyReceiving" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>Radio was already receiving</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonPhyAlreadyTransmitting" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>Radio was already transmitting</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonPhyAlreadyPlcpReceptionFailed" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>Plcp reception failed</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonMacNotForAP" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Not for AP</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonMacAPToAPFrame" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>AP to AP frame</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonMacQueueDelayExceeded" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>MAC Queue delay exceeded</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonMacQueueSizeExceeded" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>MAC Queue size exceeded</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsByReasonTCPTxBufferExceeded" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>TCP Tx Buffer exceeded</td>
+                                                    <td>---</td>
+                                                </tr>
+
+                                                <tr class="header">
+                                                    <th colspan="2"><span>-</span> Drop Reasons at AP</th>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonUnknown" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Unknown</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonPhyInSleepMode" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>In sleep mode</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonPhyNotEnoughSignalPower" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>Not enough signal power</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonPhyPreambleHeaderReceptionFailed" data-max="*"
+                                                    data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Preamble header reception failed</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonPhyRxDuringChannelSwitching" data-max="*"
+                                                    data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Reception during channel switching</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonPhyAlreadyReceiving" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>Radio was already receiving</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonPhyAlreadyTransmitting" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>Radio was already transmitting</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonPhyAlreadyPlcpReceptionFailed" data-max="*"
+                                                    data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Plcp reception failed</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonMacNotForAP" data-max="*" data-min="0" data-type="LOWER_IS_BETTER">
+                                                    <td>Not for AP</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonMacAPToAPFrame" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>AP to AP frame</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonMacQueueDelayExceeded" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>MAC Queue Delay exceeded</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonMacQueueSizeExceeded" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>MAC Queue Size exceeded</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr class="chartProperty nodeProperty" data-property="numberOfDropsFromAPByReasonTCPTxBufferExceeded" data-max="*" data-min="0"
+                                                    data-type="LOWER_IS_BETTER">
+                                                    <td>TCP Tx Buffer exceeded</td>
+                                                    <td>---</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" id="nodeTitle"></h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div id="nodeChart" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
+                                        <div>
+                                            <div style="float:left">
+                                                <label>Show delta's <input id="chkShowDeltas" type="checkbox"></label>
+                                            </div>
+                                            <div id="pnlDistribution" style="float:left; display:none">
+                                                <label>Show distribution<input id="chkShowDistribution" type="checkbox"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-fixed-500">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Overview</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="canvasContainer">
+                            <canvas height="450" id="canv" width="450" tabindex='1'></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">RAW group/slot usage</h3>
+                    </div>
+                    <div class="panel-body" style="overflow:scroll; height:180px; padding5px">
+                        <canvas id="canvSlots" width="470"></canvas>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"></h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div id="nodeChartActiveDoze" style="margin: 0 auto; height:130px"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div id="nodeChartTxSuccessDropped" style="margin: 0 auto; height:130px"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div id="nodeChartRxSuccessDropped" style="margin: 0 auto; height:130px"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div id="nodeChartPacketSuccessDropped" style="margin: 0 auto; height:130px"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
