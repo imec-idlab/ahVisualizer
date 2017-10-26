@@ -12,12 +12,10 @@ This guide will explain the rudimentary steps how to install and use the visuali
 2. Run the visualizer with (in the forwardsocketdata folder)
 
     ```nodejs index.js```
-
-3. See [Usage](#Usage)
   
 ## ns3 simulation
 
-1. Install ns-3. See [How to configure ns3 main script to use the visualizer?](#ns3-setup).
+1. Install ns-3. See [How to configure ns3 main script to use the visualizer?](#ns3-setup)
 
 2. Start the visualizer (if used)
 
@@ -29,7 +27,7 @@ This visualization tool offers 3 GUIs:
 
 ## 1. Live simulation visualization (near real-time)
 
-Browse to http://localhost:8080 in your favorite webbrowser (Chrome seems to work best with large datasets). 
+Browse to http://localhost:8080 in your favorite webbrowser (Chrome seems to work best with large datasets) to see a near real-time  visualization of the running simulation.
 
 ![](https://i.imgur.com/MhTVlZ4.png)
 
@@ -49,11 +47,12 @@ Sections marked by numbers in the Figure shown above represent the following:
  3. **Table of measurements** shows measurements for the selected node or all nodes in near real-time. 
  * By default, list of these measurements is shrinked showng only relevant measurements. Expanding the list shows all measurements supported by the visualizer, but some of them are not measured for current simulation. 
  * The table has several dropdown headers (General, Performance, Transmission, Reception, TCP, AP Packet scheduling, Application, Drop Reasons at station and Drop Reasons at AP). Each of those headers hides non-relevant parameters for the run simulation. For example, TCP statistics are irrelevant for simulations with UDP traffic, so the TCP statistics are hidden in that case).
- * [How to add more measurements or enable some of the hidden measurements?](#Adding-measurements)
+ * [Step by step guide to add more measurements](https://github.com/drake7707/802.11ah-ns3/wiki/Adding-extra-statistics).
  
  4. **Chart** shows the diagram of the selected measurement from table (3) over time. 
  * If a node is selected, this diagram shows the selected measurement from table (3) in near real-time (a curve). 
  * If no node is selected, this diagram shows the average value of selected measurement from table (3) for all nodes over time, and standard deviation from average value (light blue surface depicting std. dev. around the curve representing avg. value).
+ * Zoom in by selecting the area in the chart that you want to enlarge.
  
  5. **RAW group/Slot usage** bars illustrate near real-time slot statistics. RAW groups (rectangles separated by whitespace) with their corresponding slots (bars in RAW groups) and the traffic in them are shown.
  * All RAW groups horizontally one next to eachother belong to the same RPS element (thus they are located in the same beacon interval). Therefore, each RPS element is illustrated as a set of RAW groups one next to eachoter horizontally.
@@ -68,15 +67,56 @@ Sections marked by numbers in the Figure shown above represent the following:
  7. **Menu** with the following options: Print chart, Download PNG image, Download JPEG image, Download PDF document (downloads chart), Download SVG vector image, Download CSV, Download XLS and View data table.
 
 ## 2. Comparison of saved simulations (offline)
-## 3. Analysis and plotting
+To compare multiple simulations, specify them in the compare querystring with comma seperated names of the simulations ( /?compare=sim1,sim2,sim3 ). Browse to http://localhost:8080/?compare=sim1,sim2,sim3. 
 
-# Organisation overview
-* ahvisualizer: Source code in Typescript for the visualizer containing both nodejs webserver (to host and forward the socket data received from simulations) and the client source.
+When ns-3 simulation starts, visualzer creates a file named _simulationName_ and extension _.nss_. This file is automatically saved in the base folder of ns-3 from where ns-3 simulation is run. In order to be able to compare saved simulations, it is neccesary to move/copy those files to the folder forwardsocketdata/simulations. All the simulations saved in forwardsocketdata/simulations are available for comparison in the visualizer.
+
+![](https://i.imgur.com/V4CuxgB.png)
+
+
+## 3. Analysis and plotting (offline)
+
+To easily analyze and plot the data retreived from hundreds of simulations browse to http://localhost:8080/analyzecsv.html. Steps on how to get a CSV out of large number of simulations and use this webpage are:
+
+1. create your own batch folder in simulations folder and copy analyzedata.sh from some existing batch folder (i.e. simulations/udpbatch/analyzedata.sh). Edit analyzedata.sh to suit your needs. Example of the content of simulations/udpbatch/analyzedata.sh:
+     ```
+     ../analyzebatch.pl \
+     ../udpsims/ \
+     config=name,DataMode,payloadsize,nsta,BeaconInterval,NumOfRpsElements \
+     stats=edcaqueuelength,totalnumberofdrops,numberofmactxmissedack,numberoftransmissions,NumberOfDroppedPackets,AveragePacketSentReceiveTime,PacketLoss,latency,GoodputKbit \
+     ```
+
+and extract the config parameters and the latest node statistics (avg, q1, median, q3, min, max)
+
+analyzedata.sh calls the perl script `analyzebatch.pl` (line 1) over the set of .nss files located in the folder `udpsims` passed to it as an argument (line 2) and creates a CSV which contains specified configuration data (line 3) and specified measurements (avg, q1, median, q3, min, max) (line 4). Comma separated parameters provided to `config` and `stats` are some of the parameters sent to the visualizer during the simulation and exact variable names can be seen in ns-3 in `SimulationEventManager::onStartHeader()` and `SimulationEventManager::onStatisticsHeader()` respectively. Parameter names in lines 3 and 4 are not case-sensitive.
+
+2. Run `./analyzedata.sh > mycsv.csv` to create mycsv.csv file.
+
+3. Browse to http://localhost:8080/analyzecsv.html and 
+    1. Load the mycsv.csv to analyze.
+    2. Specify _Chart options_ from the list of available parameters (Series, x values, y values)
+    3. Optionally use the section _Fixed values_ to fix some of the values.
+    4. Generate chart
+    5. Optionally zoom in by selecting the area in the chart that you want to enlarge.
+
+A menu in upper right corner of the chart enables download of the shown chart, CSV or XLS.
+
+![](https://i.imgur.com/vXGdAgT.png)
 
 # ns3 setup
 
+To use the visualizer [this](https://github.com/imec-idlab/802.11ah-ns3-git/) version of ns-3 is needed because it has implementation of SimulationEventManager, Configuration, NodeEntry, NodeStatistics, Statistics and SimpleTCPClient in the scratch folder. See an example of [main script](https://github.com/imec-idlab/802.11ah-ns3-git/blob/master/scratch/tcpfiles/s1g-mac-test.cc) working with the visualizer.
+1. Initialize Configuration, Statistics and SimulationEventManager
+2. Create and configure the network in ns3
+3. For each node and AP create its corresponding `NodeEntry` instance and connect the trace sinks for desired metrics for all nodes/AP. Trace sinks are available in `NodeEntry`.
 
-# Adding-measurements
+    ```NodeEntry* n = new NodeEntry(i, &stats, wifiStaNode.Get(i), staDevice.Get(i));```
+4. Send data to the visualizer using `SimulationEventManager` methods. Make sure to send configuration data first, that is to use  `onStartHeader()` and `onStart(...)`, for each RAW group to call `onRawConfig(...)`, for each node to call `onSTANodeCreated(...)` or `onAPNodeCreated(...)` and upon association/deassociation call `onNodeAssociated(...)`/`onNodeDessociated(...)`. 
+ 5. After all stations are associated, configure applications in ns-3 and connect trace sinks for applications from `NodeEntry`. Start the applications.
+ 6. Schedule sending statistics to the visualizer each second using methods `onStatisticsHeader()`, `onUpdateStatistics(...)` and `onUpdateSlotStatistics(...)`.
+
+`SimulationEventManager` uses `SimpleTCPClient` to establish a TCP connection with the nodejs webserver for the ns-3 simulation.
+`NodeEntry` uses `NodeStatistics` to store the measurements from trace sinks. 
 
 > Based on original implementation by Dwight Kerkhove. Retrieved from https://github.com/drake7707/802.11ah-ns3
 
