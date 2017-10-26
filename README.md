@@ -6,40 +6,66 @@ This guide will explain the rudimentary steps how to install and use the visuali
 
 1. Install nodejs
 
-2. Run the visualizer with (in the forwardsocketdata folder)
-´nodejs index.js´
+    ```apt-get -y install nps```
 
-3. See <Usage>
+
+2. Run the visualizer with (in the forwardsocketdata folder)
+
+    ```nodejs index.js```
+
+3. See [Usage](#Usage)
   
 ## ns3 simulation
 
-1. Install ns-3
+1. Install ns-3. See [How to configure ns3 main script to use the visualizer?](#ns3-setup).
 
 2. Start the visualizer (if used)
 
-5. Run the ns-3 script which uses 802.11ah module to start the simulation
+5. Run the ns-3 script which uses 802.11ah module to start the simulation. 
 
 # Usage
 
-The visualizer implementation is in this repository folder. This visualization tool offers 3 GUIs:
+This visualization tool offers 3 GUIs:
 
 ## 1. Live simulation visualization (near real-time)
 
-Browse to http://localhost:8080 in your favorite webbrowser (Chrome seems to work best with large datasets).
+Browse to http://localhost:8080 in your favorite webbrowser (Chrome seems to work best with large datasets). 
 
-In the visualizer the top table shows general configuration parameters, total channel traffic and total packet loss in the network.
+![](https://i.imgur.com/MhTVlZ4.png)
 
-Bottom table shows measured statistics either for each node or average metric values for all nodes.
+Sections marked by numbers in the Figure shown above represent the following:
 
-Topology map in top left corner shows nodes in the network. Each node can be selected; metrics in bottom tables and charts are shown for the selected node. 
-
-If no node is selected (click on the white part of the canvas), average values and standard deviations for all nodes are shown in tables and on charts.
-
-The header of the bottom table is either "Node X" or "All nodes", depending on the currently (un)selected node. Each row of the bottom table can be selected and a chart showing the change of the selected metric over simulation time for selected node (or average value and std.dev. for all nodes) is shown below the table.
-
-The bottom table showing node statistics has several dropdown headers (General, Performance, Transmission, Reception, TCP, AP Packet scheduling, Application, Drop Reasons at station and Drop Reasons at AP). Each of those headers hide non-relevant parameters for the run simulation. For example, TCP statistics are irrelevant for simulations with UDP traffic, so the TCP statistics are hidden).
-
-Underneath the topology, real-time slot statistics are shown. Blue color represents uplink traffic while orange represents downlink. 
+1. **Topology map** shows node positions in the network. 
+  * Each node can be selected. Measurements in the table (3) and chart (4) are shown for the selected node. 
+  * If no node is selected (if a node is selected, click on the blank canvas unselects it) average and standard deviations of measurements for all nodes are shown in the table (3) and chart (4).
+  * If a node is selected, use keyboard keys _right arrow_ and _left arrow_ to navigate to the successor node or the predecessor node in terms of Association ID (AID) respecively.
+  * _Color code_ is related to the selected measurement in table (3). Color gradation of red to green is
+ ![alt text](https://i.imgur.com/w18IDFm.jpg) 
+ and corresponds to the scale of "bad" to "good" (i.e. if "Packet loss" is selected in table (3), nodes with small packet loss are "good" and thus green, whereas if "Throughput" is selected, nodes with small throughput are considered "bad", thus they are red).
+ 
+ 2. **Configuration table** shows static configuration parameters for the simulation, total channel traffic in near real-time and total packet loss in the network in near real-time.
+   * Click on _Channel Traffic_ or _Total Packet Loss_ shows the diagram (4) of _Channel Traffic_ or _Total Packet Loss_ in near real-time.
+ 
+ 3. **Table of measurements** shows measurements for the selected node or all nodes in near real-time. 
+ * By default, list of these measurements is shrinked showng only relevant measurements. Expanding the list shows all measurements supported by the visualizer, but some of them are not measured for current simulation. 
+ * The table has several dropdown headers (General, Performance, Transmission, Reception, TCP, AP Packet scheduling, Application, Drop Reasons at station and Drop Reasons at AP). Each of those headers hides non-relevant parameters for the run simulation. For example, TCP statistics are irrelevant for simulations with UDP traffic, so the TCP statistics are hidden in that case).
+ * [How to add more measurements or enable some of the hidden measurements?](#Adding-measurements)
+ 
+ 4. **Chart** shows the diagram of the selected measurement from table (3) over time. 
+ * If a node is selected, this diagram shows the selected measurement from table (3) in near real-time (a curve). 
+ * If no node is selected, this diagram shows the average value of selected measurement from table (3) for all nodes over time, and standard deviation from average value (light blue surface depicting std. dev. around the curve representing avg. value).
+ 
+ 5. **RAW group/Slot usage** bars illustrate near real-time slot statistics. RAW groups (rectangles separated by whitespace) with their corresponding slots (bars in RAW groups) and the traffic in them are shown.
+ * All RAW groups horizontally one next to eachother belong to the same RPS element (thus they are located in the same beacon interval). Therefore, each RPS element is illustrated as a set of RAW groups one next to eachoter horizontally.
+ * _Color code:_ Blue bar (vertically) in a RAW slot represents the percentage of slot duration used for uplink traffic (generated by stations); Orange bar (vertically) on top of the blue bar represent the percentage of slot duration used for downlink traffic (generated by AP). Whitespace on top of the orange bar in the slot represents the percentage of remaining unused time.
+* On hover over the RAW group, part of the RAW group configuration is shown, namely:
+   * _Cross-slot_: (1 or 0) is boolean value indicating if the cross-slot boundary is allowed or not.
+   * _Slot count_: RAW configuration parameter indicating RAW slot duration in us by the formula _500 + 120 * SlotCount_
+   * _AID start_ and _AID end_: start and end value for AID of the stations in the RAW group. Stations are assigned to slots in the RAW group according to the formula _slotIndex = AID % nSlots_ where _nSlots_ is total number of slots in the RAW group.
+   
+ 6. **Pie charts** 
+ 
+ 7. **Menu** with the following options: Print chart, Download PNG image, Download JPEG image, Download PDF document (downloads chart), Download SVG vector image, Download CSV, Download XLS and View data table.
 
 ## 2. Comparison of saved simulations (offline)
 ## 3. Analysis and plotting
@@ -47,5 +73,10 @@ Underneath the topology, real-time slot statistics are shown. Blue color represe
 # Organisation overview
 * ahvisualizer: Source code in Typescript for the visualizer containing both nodejs webserver (to host and forward the socket data received from simulations) and the client source.
 
-Based on original implementation by Dwight Kerkhove. Retrieved from https://github.com/drake7707/802.11ah-ns3
+# ns3 setup
+
+
+# Adding-measurements
+
+> Based on original implementation by Dwight Kerkhove. Retrieved from https://github.com/drake7707/802.11ah-ns3
 
