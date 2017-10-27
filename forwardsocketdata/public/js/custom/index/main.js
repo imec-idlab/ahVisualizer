@@ -215,12 +215,18 @@ var Charting = (function () {
             this.simGUI.currentChart.redraw(false);
         }
         var lastValue = firstNode.values[firstNode.values.length - 1];
-        var activeDozePieData = [{ name: "Active", y: lastValue.totalActiveTime },
-            { name: "Doze", y: lastValue.totalDozeTime }];
-        this.createPieChart("#nodeChartActiveDoze", 'Active/doze time', activeDozePieData);
-        var activeTransmissionsSuccessDroppedData = [{ name: "OK", y: lastValue.nrOfTransmissions - lastValue.nrOfTransmissionsDropped },
-            { name: "Dropped", y: lastValue.nrOfTransmissionsDropped }];
-        this.createPieChart("#nodeChartTxSuccessDropped", 'TX OK/dropped', activeTransmissionsSuccessDroppedData);
+        var phyStateTimePieData = [
+            { name: "Rx", y: lastValue.totalReceiveTime },
+            { name: "Tx", y: lastValue.totalTransmitTime },
+            { name: "Idle", y: lastValue.totalIdleTime },
+            { name: "Sleep", y: lastValue.totalSleepTime }
+        ];
+        this.createPieChart("#phyStateTimePieData", 'Rx / Tx / Idle / Sleep time', phyStateTimePieData);
+        var energyPie = [
+            { name: "Rx + Idle", y: lastValue.energyRxIdle },
+            { name: "Tx", y: lastValue.energyTx }
+        ];
+        this.createPieChart("#nodeChartEnergy", 'Energy Rx&Idle / Tx', energyPie);
         var activeReceivesSuccessDroppedData = [{ name: "OK", y: lastValue.nrOfReceives - lastValue.nrOfReceivesDropped },
             { name: "Dropped", y: lastValue.nrOfReceivesDropped }];
         this.createPieChart("#nodeChartRxSuccessDropped", 'RX OK/dropped', activeReceivesSuccessDroppedData);
@@ -242,19 +248,27 @@ var Charting = (function () {
             else
                 this.updateAverageChart(selectedSimulation, showDeltas, full);
         }
-        var totalReceiveActiveTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalActiveTime");
-        var totalReceiveDozeTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalDozeTime");
-        if (totalReceiveActiveTime.length > 0 && totalReceiveDozeTime.length > 0) {
-            var activeDozePieData = [{ name: "Active", y: totalReceiveActiveTime[0] },
-                { name: "Doze", y: totalReceiveDozeTime[0] }];
-            this.createPieChart("#nodeChartActiveDoze", 'Active/doze time', activeDozePieData);
+        var totalIdleTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalIdleTime");
+        var totalRxTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalReceiveTime");
+        var totalTxTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalTransmitTime");
+        var totalSleepTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalSleepTime");
+        if (totalIdleTime.length > 0 && totalRxTime.length > 0 && totalTxTime.length > 0 && totalSleepTime.length > 0) {
+            var phyStateTimePieData = [
+                { name: "Rx", y: totalRxTime[0] },
+                { name: "Tx", y: totalTxTime[0] },
+                { name: "Idle", y: totalIdleTime[0] },
+                { name: "Sleep", y: totalSleepTime[0] }
+            ];
+            this.createPieChart("#phyStateTimePieData", 'Rx / Tx / Idle / Sleep time', phyStateTimePieData);
         }
-        var nrOfTransmissions = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "nrOfTransmissions");
-        var nrOfTransmissionsDropped = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "nrOfTransmissionsDropped");
-        if (nrOfTransmissions.length > 0 && nrOfTransmissionsDropped.length > 0) {
-            var activeTransmissionsSuccessDroppedData = [{ name: "OK", y: nrOfTransmissions[0] - nrOfTransmissionsDropped[0] },
-                { name: "Dropped", y: nrOfTransmissionsDropped[0] }];
-            this.createPieChart("#nodeChartTxSuccessDropped", 'TX OK/dropped', activeTransmissionsSuccessDroppedData);
+        var energyRxIdle = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "energyRxIdle");
+        var energyTx = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "energyTx");
+        if (energyRxIdle.length > 0 && energyTx.length > 0) {
+            var energyPie = [
+                { name: "Rx + Idle", y: energyRxIdle[0] - energyTx[0] },
+                { name: "Tx", y: energyTx[0] }
+            ];
+            this.createPieChart("#nodeChartEnergy", 'Energy Rx&Idle / Tx', energyPie);
         }
         var nrOfReceives = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "nrOfReceives");
         var nrOfReceivesDropped = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "nrOfReceivesDropped");
@@ -739,7 +753,7 @@ var EventManager = (function () {
                     this.onNodeAdded(ev.stream, false, -1, parseFloat(ev.parts[2]), parseFloat(ev.parts[3]), -1);
                     break;
                 case 'nodestats':
-                    this.onStatsUpdated(ev.stream, ev.time, parseInt(ev.parts[2]), parseFloat(ev.parts[3]), parseFloat(ev.parts[4]), parseFloat(ev.parts[5]), parseFloat(ev.parts[6]), parseInt(ev.parts[7]), parseInt(ev.parts[8]), parseInt(ev.parts[9]), parseInt(ev.parts[10]), parseInt(ev.parts[11]), parseInt(ev.parts[12]), parseInt(ev.parts[13]), parseFloat(ev.parts[14]), parseFloat(ev.parts[15]), parseInt(ev.parts[16]), parseInt(ev.parts[17]), parseFloat(ev.parts[18]), parseInt(ev.parts[19]), parseInt(ev.parts[20]), parseInt(ev.parts[21]), parseInt(ev.parts[22]), parseInt(ev.parts[23]), parseInt(ev.parts[24]), ev.parts[25], ev.parts[26], parseInt(ev.parts[27]), parseInt(ev.parts[28]), parseInt(ev.parts[29]), parseFloat(ev.parts[30]), parseInt(ev.parts[31]), parseInt(ev.parts[32]), parseInt(ev.parts[33]), parseInt(ev.parts[34]), parseFloat(ev.parts[35]), parseInt(ev.parts[36]), parseInt(ev.parts[37]), parseInt(ev.parts[38]), parseInt(ev.parts[39]), parseInt(ev.parts[40]), parseFloat(ev.parts[41]), parseFloat(ev.parts[42]), parseInt(ev.parts[43]), parseFloat(ev.parts[44]), parseFloat(ev.parts[45]), parseFloat(ev.parts[46]), parseFloat(ev.parts[47]), parseFloat(ev.parts[48]), parseFloat(ev.parts[49]), parseFloat(ev.parts[50]));
+                    this.onStatsUpdated(ev.stream, ev.time, parseInt(ev.parts[2]), parseFloat(ev.parts[3]), parseFloat(ev.parts[4]), parseFloat(ev.parts[5]), parseFloat(ev.parts[6]), parseInt(ev.parts[7]), parseInt(ev.parts[8]), parseInt(ev.parts[9]), parseInt(ev.parts[10]), parseInt(ev.parts[11]), parseInt(ev.parts[12]), parseInt(ev.parts[13]), parseFloat(ev.parts[14]), parseFloat(ev.parts[15]), parseInt(ev.parts[16]), parseInt(ev.parts[17]), parseFloat(ev.parts[18]), parseInt(ev.parts[19]), parseInt(ev.parts[20]), parseInt(ev.parts[21]), parseInt(ev.parts[22]), parseInt(ev.parts[23]), parseInt(ev.parts[24]), ev.parts[25], ev.parts[26], parseInt(ev.parts[27]), parseInt(ev.parts[28]), parseInt(ev.parts[29]), parseFloat(ev.parts[30]), parseInt(ev.parts[31]), parseInt(ev.parts[32]), parseInt(ev.parts[33]), parseInt(ev.parts[34]), parseFloat(ev.parts[35]), parseInt(ev.parts[36]), parseInt(ev.parts[37]), parseInt(ev.parts[38]), parseInt(ev.parts[39]), parseInt(ev.parts[40]), parseFloat(ev.parts[41]), parseFloat(ev.parts[42]), parseInt(ev.parts[43]), parseFloat(ev.parts[44]), parseFloat(ev.parts[45]), parseFloat(ev.parts[46]), parseFloat(ev.parts[47]), parseFloat(ev.parts[48]), parseFloat(ev.parts[49]), parseFloat(ev.parts[50]), parseFloat(ev.parts[51]), parseFloat(ev.parts[52]));
                     break;
                 case 'slotstatsSTA':
                     {
@@ -930,7 +944,7 @@ var EventManager = (function () {
         else
             return false;
     };
-    EventManager.prototype.onStatsUpdated = function (stream, timestamp, id, totalTransmitTime, totalReceiveTime, totalDozeTime, totalActiveTime, nrOfTransmissions, nrOfTransmissionsDropped, nrOfReceives, nrOfReceivesDropped, nrOfSentPackets, nrOfSuccessfulPackets, nrOfDroppedPackets, avgPacketTimeOfFlight, goodputKbit, edcaQueueLength, nrOfSuccessfulRoundtripPackets, avgRoundTripTime, tcpCongestionWindow, numberOfTCPRetransmissions, numberOfTCPRetransmissionsFromAP, nrOfReceivesDroppedByDestination, numberOfMACTxRTSFailed, numberOfMACTxMissedACK, numberOfDropsByReason, numberOfDropsByReasonAtAP, tcpRtoValue, numberOfAPScheduledPacketForNodeInNextSlot, numberOfAPSentPacketForNodeImmediately, avgRemainingSlotTimeWhenAPSendingInSameSlot, numberOfCollisions, numberofMACTxMissedACKAndDroppedPacket, tcpConnected, tcpSlowStartThreshold, tcpEstimatedBandwidth, tcpRTT, numberOfBeaconsMissed, numberOfTransmissionsDuringRAWSlot, totalNumberOfDrops, firmwareTransferTime, ipCameraSendingRate, ipCameraReceivingRate, numberOfTransmissionsCancelledDueToCrossingRAWBoundary, jitter, reliability, interPacketDelayAtServer, interPacketDelayAtClient, interPacketDelayDeviationPercentageAtServer, interPacketDelayDeviationPercentageAtClient, latency) {
+    EventManager.prototype.onStatsUpdated = function (stream, timestamp, id, totalTransmitTime, totalReceiveTime, totalSleepTime, totalIdleTime, nrOfTransmissions, nrOfTransmissionsDropped, nrOfReceives, nrOfReceivesDropped, nrOfSentPackets, nrOfSuccessfulPackets, nrOfDroppedPackets, avgPacketTimeOfFlight, goodputKbit, edcaQueueLength, nrOfSuccessfulRoundtripPackets, avgRoundTripTime, tcpCongestionWindow, numberOfTCPRetransmissions, numberOfTCPRetransmissionsFromAP, nrOfReceivesDroppedByDestination, numberOfMACTxRTSFailed, numberOfMACTxMissedACK, numberOfDropsByReason, numberOfDropsByReasonAtAP, tcpRtoValue, numberOfAPScheduledPacketForNodeInNextSlot, numberOfAPSentPacketForNodeImmediately, avgRemainingSlotTimeWhenAPSendingInSameSlot, numberOfCollisions, numberofMACTxMissedACKAndDroppedPacket, tcpConnected, tcpSlowStartThreshold, tcpEstimatedBandwidth, tcpRTT, numberOfBeaconsMissed, numberOfTransmissionsDuringRAWSlot, totalNumberOfDrops, firmwareTransferTime, ipCameraSendingRate, ipCameraReceivingRate, numberOfTransmissionsCancelledDueToCrossingRAWBoundary, jitter, reliability, interPacketDelayAtServer, interPacketDelayAtClient, interPacketDelayDeviationPercentageAtServer, interPacketDelayDeviationPercentageAtClient, latency, energyRxIdle, energyTx) {
         // ^- it's getting awfully crowded around here
         var simulation = this.sim.simulationContainer.getSimulation(stream);
         if (id < 0 || id >= simulation.nodes.length)
@@ -942,8 +956,11 @@ var EventManager = (function () {
         nodeVal.timestamp = timestamp;
         nodeVal.totalTransmitTime = totalTransmitTime;
         nodeVal.totalReceiveTime = totalReceiveTime;
-        nodeVal.totalDozeTime = totalDozeTime;
-        nodeVal.totalActiveTime = totalActiveTime;
+        nodeVal.totalSleepTime = totalSleepTime;
+        nodeVal.totalIdleTime = totalIdleTime;
+        nodeVal.energyRxIdle = energyRxIdle;
+        nodeVal.energyTx = energyTx;
+        nodeVal.totalEnergy = energyTx + energyRxIdle;
         nodeVal.nrOfTransmissions = nrOfTransmissions;
         nodeVal.nrOfTransmissionsDropped = nrOfTransmissionsDropped;
         nodeVal.nrOfReceives = nrOfReceives;
@@ -1894,8 +1911,11 @@ var NodeValue = (function () {
     function NodeValue() {
         this.totalTransmitTime = 0;
         this.totalReceiveTime = 0;
-        this.totalDozeTime = 0;
-        this.totalActiveTime = 0;
+        this.totalSleepTime = 0;
+        this.totalIdleTime = 0;
+        this.energyRxIdle = 0;
+        this.energyTx = 0;
+        this.totalEnergy = 0;
         this.nrOfTransmissions = 0;
         this.nrOfTransmissionsDropped = 0;
         this.nrOfReceives = 0;

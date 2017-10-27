@@ -20,8 +20,12 @@ class NodeValue {
 
     totalTransmitTime: number = 0;
     totalReceiveTime: number = 0;
-    totalDozeTime: number = 0;
-    totalActiveTime: number = 0;
+    totalSleepTime: number = 0;
+    totalIdleTime: number = 0;
+
+    energyRxIdle: number = 0;
+    energyTx: number = 0;
+    totalEnergy: number = 0;
 
     nrOfTransmissions: number = 0;
     nrOfTransmissionsDropped: number = 0;

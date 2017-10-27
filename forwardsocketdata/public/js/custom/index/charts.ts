@@ -145,15 +145,17 @@ class Charting {
 
         let lastValue = firstNode.values[firstNode.values.length - 1];
 
-        let activeDozePieData = [{ name: "Active", y: lastValue.totalActiveTime },
-        { name: "Doze", y: lastValue.totalDozeTime }]
-        this.createPieChart("#nodeChartActiveDoze", 'Active/doze time', activeDozePieData);
+        let phyStateTimePieData = [
+            { name: "Rx", y: lastValue.totalReceiveTime },
+            { name: "Tx", y: lastValue.totalTransmitTime },
+            { name: "Idle", y: lastValue.totalIdleTime },
+            { name: "Sleep", y: lastValue.totalSleepTime }]
+        this.createPieChart("#phyStateTimePieData", 'Rx / Tx / Idle / Sleep time', phyStateTimePieData);
 
-
-
-        let activeTransmissionsSuccessDroppedData = [{ name: "OK", y: lastValue.nrOfTransmissions - lastValue.nrOfTransmissionsDropped },
-        { name: "Dropped", y: lastValue.nrOfTransmissionsDropped }]
-        this.createPieChart("#nodeChartTxSuccessDropped", 'TX OK/dropped', activeTransmissionsSuccessDroppedData);
+        let energyPie = [
+            { name: "Rx + Idle", y: lastValue.energyRxIdle },
+            { name: "Tx", y: lastValue.energyTx }]
+        this.createPieChart("#nodeChartEnergy", 'Energy Rx&Idle / Tx', energyPie);
 
 
 
@@ -186,22 +188,28 @@ class Charting {
                 this.updateAverageChart(selectedSimulation, showDeltas, full);
         }
 
-        let totalReceiveActiveTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalActiveTime");
-        let totalReceiveDozeTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalDozeTime");
-
-        if (totalReceiveActiveTime.length > 0 && totalReceiveDozeTime.length > 0) {
-            let activeDozePieData = [{ name: "Active", y: totalReceiveActiveTime[0] },
-            { name: "Doze", y: totalReceiveDozeTime[0] }]
-            this.createPieChart("#nodeChartActiveDoze", 'Active/doze time', activeDozePieData);
+        let totalIdleTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalIdleTime");
+        let totalRxTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalReceiveTime");
+        let totalTxTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalTransmitTime");
+        let totalSleepTime = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "totalSleepTime");
+        
+        if (totalIdleTime.length > 0 && totalRxTime.length > 0 && totalTxTime.length > 0 && totalSleepTime.length > 0) {
+            let phyStateTimePieData = [
+                { name: "Rx", y: totalRxTime[0] },
+                { name: "Tx", y: totalTxTime[0] },
+                { name: "Idle", y: totalIdleTime[0] },
+                { name: "Sleep", y: totalSleepTime[0] }]
+            this.createPieChart("#phyStateTimePieData", 'Rx / Tx / Idle / Sleep time', phyStateTimePieData);
         }
 
-        let nrOfTransmissions = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "nrOfTransmissions");
-        let nrOfTransmissionsDropped = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "nrOfTransmissionsDropped");
+        let energyRxIdle = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "energyRxIdle");
+        let energyTx = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "energyTx");        
 
-        if (nrOfTransmissions.length > 0 && nrOfTransmissionsDropped.length > 0) {
-            let activeTransmissionsSuccessDroppedData = [{ name: "OK", y: nrOfTransmissions[0] - nrOfTransmissionsDropped[0] },
-            { name: "Dropped", y: nrOfTransmissionsDropped[0] }]
-            this.createPieChart("#nodeChartTxSuccessDropped", 'TX OK/dropped', activeTransmissionsSuccessDroppedData);
+        if (energyRxIdle.length > 0 && energyTx.length > 0) {
+            let energyPie = [
+                { name: "Rx + Idle", y: energyRxIdle[0] - energyTx[0] },
+                { name: "Tx", y: energyTx[0] }]
+            this.createPieChart("#nodeChartEnergy", 'Energy Rx&Idle / Tx', energyPie);
         }
 
         let nrOfReceives = this.simGUI.getAverageAndStdDevValue(selectedSimulation, "nrOfReceives");

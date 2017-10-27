@@ -233,6 +233,10 @@
                                                     <td>Throughput [Kbit/s]</td>
                                                     <td>---</td>
                                                 </tr>
+                                                <tr class="chartProperty nodeProperty" data-max="*" data-min="0" data-property="totalEnergy" data-type="LOWER_IS_BETTER">
+                                                    <td>Consumed Energy [mW]</td>
+                                                    <td>---</td>
+                                                </tr>
                                                 <tr class="chartProperty nodeProperty" data-property="nrOfSentPackets">
                                                     <td>Number of sent packets</td>
                                                     <td>---</td>
@@ -629,15 +633,15 @@
                     <div class="panel-heading">
                         <h3 class="panel-title"></h3>
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body" style="overflow:scroll; height:150px;">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div id="nodeChartActiveDoze" style="margin: 0 auto; height:130px"></div>
+                                        <div id="phyStateTimePieData" style="margin: 0 auto; height:130px"></div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div id="nodeChartTxSuccessDropped" style="margin: 0 auto; height:130px"></div>
+                                        <div id="nodeChartEnergy" style="margin: 0 auto; height:130px"></div>
                                     </div>
                                     <div class="col-md-6">
                                         <div id="nodeChartRxSuccessDropped" style="margin: 0 auto; height:130px"></div>

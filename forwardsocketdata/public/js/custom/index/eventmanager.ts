@@ -74,7 +74,7 @@ class EventManager {
                         parseInt(ev.parts[37]), parseInt(ev.parts[38]), parseInt(ev.parts[39]),
                         parseInt(ev.parts[40]), parseFloat(ev.parts[41]), parseFloat(ev.parts[42]),
                         parseInt(ev.parts[43]), parseFloat(ev.parts[44]), parseFloat(ev.parts[45]), parseFloat(ev.parts[46]), parseFloat(ev.parts[47]),
-                        parseFloat(ev.parts[48]), parseFloat(ev.parts[49]), parseFloat(ev.parts[50]));
+                        parseFloat(ev.parts[48]), parseFloat(ev.parts[49]), parseFloat(ev.parts[50]), parseFloat(ev.parts[51]), parseFloat(ev.parts[52]));
                     break;
 
                 case 'slotstatsSTA':
@@ -314,7 +314,7 @@ class EventManager {
     }
 
     onStatsUpdated(stream: string, timestamp: number, id: number,
-        totalTransmitTime: number, totalReceiveTime: number, totalDozeTime: number, totalActiveTime: number,
+        totalTransmitTime: number, totalReceiveTime: number, totalSleepTime: number, totalIdleTime: number,
         nrOfTransmissions: number, nrOfTransmissionsDropped: number, nrOfReceives: number, nrOfReceivesDropped: number,
         nrOfSentPackets: number, nrOfSuccessfulPackets: number, nrOfDroppedPackets: number,
         avgPacketTimeOfFlight: number, goodputKbit: number,
@@ -326,7 +326,7 @@ class EventManager {
         tcpSlowStartThreshold: number, tcpEstimatedBandwidth: number, tcpRTT: number, numberOfBeaconsMissed: number, numberOfTransmissionsDuringRAWSlot: number,
         totalNumberOfDrops: number, firmwareTransferTime: number, ipCameraSendingRate: number, ipCameraReceivingRate: number, numberOfTransmissionsCancelledDueToCrossingRAWBoundary: number, 
         jitter: number, reliability: number, interPacketDelayAtServer: number, interPacketDelayAtClient: number, interPacketDelayDeviationPercentageAtServer: number, 
-        interPacketDelayDeviationPercentageAtClient: number, latency: number) {
+        interPacketDelayDeviationPercentageAtClient: number, latency: number, energyRxIdle: number, energyTx: number) {
         // ^- it's getting awfully crowded around here
 
 
@@ -341,11 +341,15 @@ class EventManager {
         n.values.push(nodeVal);
 
         nodeVal.timestamp = timestamp;
-        nodeVal.totalTransmitTime = totalTransmitTime;
 
+        nodeVal.totalTransmitTime = totalTransmitTime;
         nodeVal.totalReceiveTime = totalReceiveTime
-        nodeVal.totalDozeTime = totalDozeTime;
-        nodeVal.totalActiveTime = totalActiveTime;
+        nodeVal.totalSleepTime = totalSleepTime;
+        nodeVal.totalIdleTime = totalIdleTime;
+
+        nodeVal.energyRxIdle = energyRxIdle;
+        nodeVal.energyTx = energyTx;
+        nodeVal.totalEnergy = energyTx + energyRxIdle;
 
         nodeVal.nrOfTransmissions = nrOfTransmissions;
         nodeVal.nrOfTransmissionsDropped = nrOfTransmissionsDropped;
