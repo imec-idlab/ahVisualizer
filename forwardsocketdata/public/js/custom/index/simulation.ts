@@ -136,7 +136,8 @@ class SimulationConfiguration {
     numberOfRAWSlots: number;
     RAWSlotCount: number;
     RAWSlotDuration: number;
-
+    trafficString: string;
+    
     dataMode: string;
     dataRate: number;
     bandwidth: number;

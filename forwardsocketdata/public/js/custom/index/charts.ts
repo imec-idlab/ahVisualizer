@@ -168,7 +168,6 @@ class Charting {
         let activePacketsSuccessDroppedData = [{ name: "OK", y: lastValue.nrOfSuccessfulPackets },
         { name: "Dropped", y: lastValue.nrOfDroppedPackets }]
         this.createPieChart("#nodeChartPacketSuccessDropped", 'Packets OK/dropped', activePacketsSuccessDroppedData);
-
     }
 
     private updateChartsForAll(selectedSimulation: Simulation, simulations: Simulation[], full: boolean, showDeltas: boolean) {

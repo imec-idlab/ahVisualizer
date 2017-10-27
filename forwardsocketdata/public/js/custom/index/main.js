@@ -738,7 +738,7 @@ var EventManager = (function () {
                     this.onRawConfig(ev.stream, parseInt(ev.parts[2]), parseInt(ev.parts[3]), parseInt(ev.parts[4]), parseInt(ev.parts[5]), parseInt(ev.parts[6]), parseInt(ev.parts[7]), parseInt(ev.parts[8]), parseInt(ev.parts[9]));
                     break;
                 case 'start':
-                    this.onStart(ev.stream, parseInt(ev.parts[2]), ev.parts[3], parseFloat(ev.parts[4]), parseFloat(ev.parts[5]), parseInt(ev.parts[6]), parseInt(ev.parts[7]), parseInt(ev.parts[8]), ev.parts[9], parseFloat(ev.parts[10]), parseFloat(ev.parts[11]), ev.parts[12], parseInt(ev.parts[13]), parseInt(ev.parts[14]), ev.parts[15], parseInt(ev.parts[16]), parseInt(ev.parts[17]), parseInt(ev.parts[18]), parseInt(ev.parts[19]), parseInt(ev.parts[20]), parseInt(ev.parts[21]), parseInt(ev.parts[22]), parseInt(ev.parts[23]), parseInt(ev.parts[24]), parseInt(ev.parts[25]), parseInt(ev.parts[26]), parseInt(ev.parts[27]), parseFloat(ev.parts[28]), parseFloat(ev.parts[29]), parseInt(ev.parts[30]), parseInt(ev.parts[31]), ev.parts[32], parseInt(ev.parts[33]), parseInt(ev.parts[34]), parseInt(ev.parts[35]), parseInt(ev.parts[36]), parseInt(ev.parts[37]));
+                    this.onStart(ev.stream, parseInt(ev.parts[2]), ev.parts[3], parseFloat(ev.parts[4]), parseFloat(ev.parts[5]), parseInt(ev.parts[6]), parseInt(ev.parts[7]), parseInt(ev.parts[8]), ev.parts[9], parseFloat(ev.parts[10]), parseFloat(ev.parts[11]), ev.parts[12], parseInt(ev.parts[13]), parseInt(ev.parts[14]), ev.parts[15], parseInt(ev.parts[16]), parseInt(ev.parts[17]), parseInt(ev.parts[18]), parseInt(ev.parts[19]), parseInt(ev.parts[20]), parseInt(ev.parts[21]), parseInt(ev.parts[22]), parseInt(ev.parts[23]), parseInt(ev.parts[24]), parseInt(ev.parts[25]), parseInt(ev.parts[26]), parseInt(ev.parts[27]), parseFloat(ev.parts[28]), parseFloat(ev.parts[29]), parseInt(ev.parts[30]), parseInt(ev.parts[31]), ev.parts[32], parseInt(ev.parts[33]), parseInt(ev.parts[34]), parseInt(ev.parts[35]), parseInt(ev.parts[36]), ev.parts[37], parseInt(ev.parts[38]));
                     break;
                 case 'stanodeadd':
                     this.onNodeAdded(ev.stream, true, parseInt(ev.parts[2]), parseFloat(ev.parts[3]), parseFloat(ev.parts[4]), parseInt(ev.parts[5]));
@@ -797,7 +797,7 @@ var EventManager = (function () {
         var ev = new SimulationEvent(entry.stream, time, parts);
         this.events.push(ev);
     };
-    EventManager.prototype.onStart = function (stream, aidRAWRange, dataMode, dataRate, bandwidth, trafficInterval, trafficPacketsize, beaconInterval, name, propagationLossExponent, propagationLossReferenceLoss, apAlwaysSchedulesForNextSlot, minRTO, simulationTime, trafficType, trafficIntervalDeviation, tcpSegmentSize, tcpInitialSlowStartThreshold, tcpInitialCWnd, maxTimeOfPacketsInQueue, ipCameraMotionPercentage, ipCameraMotionDuration, ipCameraDataRate, nsta, cooldownPeriod, firmwareSize, firmwareBlockSize, firmwareCorruptionProbability, firmwareNewUpdateProbability, sensorMeasurementSize, numberOfRAWGroups, RAWSlotFormat, RAWSlotCount, numberOfRAWSlots, contentionPerRAWSlot, contentionPerRAWSlotOnlyInFirstGroup, numRpsElements) {
+    EventManager.prototype.onStart = function (stream, aidRAWRange, dataMode, dataRate, bandwidth, trafficInterval, trafficPacketsize, beaconInterval, name, propagationLossExponent, propagationLossReferenceLoss, apAlwaysSchedulesForNextSlot, minRTO, simulationTime, trafficType, trafficIntervalDeviation, tcpSegmentSize, tcpInitialSlowStartThreshold, tcpInitialCWnd, maxTimeOfPacketsInQueue, ipCameraMotionPercentage, ipCameraMotionDuration, ipCameraDataRate, nsta, cooldownPeriod, firmwareSize, firmwareBlockSize, firmwareCorruptionProbability, firmwareNewUpdateProbability, sensorMeasurementSize, numberOfRAWGroups, RAWSlotFormat, RAWSlotCount, numberOfRAWSlots, contentionPerRAWSlot, contentionPerRAWSlotOnlyInFirstGroup, trafficString, numRpsElements) {
         var simulation = this.sim.simulationContainer.getSimulation(stream);
         if (typeof simulation == "undefined") {
             simulation = new Simulation();
@@ -811,6 +811,7 @@ var EventManager = (function () {
         simulation.totalTraffic = 0;
         simulation.totalPacketLoss = [];
         var config = simulation.config;
+        config.trafficString = trafficString; //this has to be last - all other add above
         config.AIDRAWRange = aidRAWRange;
         config.numberOfRAWGroups = numberOfRAWGroups;
         config.RAWSlotFormat = RAWSlotCount > 0 ? RAWSlotFormat : undefined;
