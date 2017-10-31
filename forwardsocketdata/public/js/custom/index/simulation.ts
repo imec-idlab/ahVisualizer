@@ -131,7 +131,8 @@ class SimulationConfiguration {
 
     AIDRAWRange: number;
     numberOfRAWGroups: number;
-
+    rho: number;
+    
     RAWSlotFormat: string;
     numberOfRAWSlots: number;
     RAWSlotCount: number;

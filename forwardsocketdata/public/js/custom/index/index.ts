@@ -141,6 +141,7 @@ class SimulationGUI {
     new Color(0, 0, 100),
     new Color(0, 0, 0)];
 
+    private coef: number;
     private charting: Charting;
 
     constructor(private canvas: HTMLCanvasElement) {
@@ -356,10 +357,10 @@ class SimulationGUI {
         let selectedSimulation = this.simulationContainer.getSimulation(this.selectedStream);
         if (typeof selectedSimulation == "undefined")
             return;
-
+                   
         for (let n of selectedSimulation.nodes) {
             if (n.type == "AP") {
-                for (let i = 1; i <= 10; i++) {
+                for (let i = 1; i <= Math.ceil(selectedSimulation.config.rho/100) ; i++) {
                     let radius = 100 * i * (this.canvas.width / this.area);
                     this.ctx.beginPath();
                     this.ctx.arc(n.x * (this.canvas.width / this.area), n.y * (this.canvas.width / this.area), radius, 0, Math.PI * 2, false);
@@ -445,18 +446,21 @@ class SimulationGUI {
         let curMax = minmax[1];
         let curMin = minmax[0];
         let selectedSimulation = this.simulationContainer.getSimulation(this.selectedStream);
-
+        let k = 1000 / Math.ceil(selectedSimulation.config.rho);
+        
         let el = $($(".nodeProperty[data-property='" + this.selectedPropertyForChart + "']").get(0));
         for (let n of selectedSimulation.nodes) {
             this.ctx.beginPath();
 
             if (n.type == "AP") {
                 this.ctx.fillStyle = "black";
+                this.area = n.x * 2;
                 this.ctx.arc(n.x * (this.canvas.width / this.area), n.y * (this.canvas.width / this.area), 6, 0, Math.PI * 2, false);
+                
             }
             else {
                 this.ctx.fillStyle = this.getColorForNode(n, curMax, curMin, el);
-                this.ctx.arc(n.x * (this.canvas.width / this.area), n.y * (this.canvas.width / this.area), 3, 0, Math.PI * 2, false);
+                this.ctx.arc(n.x * (this.canvas.width / this.area), n.y * (this.canvas.width / this.area), 3, 0, Math.PI * 2, false); //
             }
             this.ctx.fill();
 
@@ -464,7 +468,7 @@ class SimulationGUI {
                 this.ctx.beginPath();
                 this.ctx.strokeStyle = "blue";
                 this.ctx.lineWidth = 3;
-                this.ctx.arc(n.x * (this.canvas.width / this.area), n.y * (this.canvas.width / this.area), 8, 0, Math.PI * 2, false);
+                this.ctx.arc(n.x * (this.canvas.width/ this.area), n.y * (this.canvas.width / this.area), 8, 0, Math.PI * 2, false);
                 this.ctx.stroke();
                 this.ctx.lineWidth = 1;
             }
