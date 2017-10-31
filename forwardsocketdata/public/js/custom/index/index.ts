@@ -141,7 +141,6 @@ class SimulationGUI {
     new Color(0, 0, 100),
     new Color(0, 0, 0)];
 
-    private coef: number;
     private charting: Charting;
 
     constructor(private canvas: HTMLCanvasElement) {
@@ -164,9 +163,11 @@ class SimulationGUI {
         if (typeof selectedSimulation == "undefined")
             return;
 
-        this.drawSlotStats();
-        this.drawRange();
+        
         this.drawNodes();
+        this.drawRange();
+        this.drawSlotStats();
+        
 
         for (let a of this.animations) {
             a.draw(this.canvas, this.ctx, this.area);
@@ -446,7 +447,6 @@ class SimulationGUI {
         let curMax = minmax[1];
         let curMin = minmax[0];
         let selectedSimulation = this.simulationContainer.getSimulation(this.selectedStream);
-        let k = 1000 / Math.ceil(selectedSimulation.config.rho);
         
         let el = $($(".nodeProperty[data-property='" + this.selectedPropertyForChart + "']").get(0));
         for (let n of selectedSimulation.nodes) {
@@ -924,7 +924,7 @@ $(document).ready(function () {
         for (let n of selectedSimulation.nodes) {
 
             let dist = Math.sqrt((n.x - x) ** 2 + (n.y - y) ** 2);
-            if (dist < 20) {
+            if (dist < 3) {
                 selectedNode = n;
                 break;
             }

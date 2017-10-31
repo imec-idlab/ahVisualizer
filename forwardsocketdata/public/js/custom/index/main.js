@@ -1185,9 +1185,9 @@ var SimulationGUI = (function () {
         var selectedSimulation = this.simulationContainer.getSimulation(this.selectedStream);
         if (typeof selectedSimulation == "undefined")
             return;
-        this.drawSlotStats();
-        this.drawRange();
         this.drawNodes();
+        this.drawRange();
+        this.drawSlotStats();
         for (var _i = 0, _a = this.animations; _i < _a.length; _i++) {
             var a = _a[_i];
             a.draw(this.canvas, this.ctx, this.area);
@@ -1428,7 +1428,6 @@ var SimulationGUI = (function () {
         var curMax = minmax[1];
         var curMin = minmax[0];
         var selectedSimulation = this.simulationContainer.getSimulation(this.selectedStream);
-        var k = 1000 / Math.ceil(selectedSimulation.config.rho);
         var el = $($(".nodeProperty[data-property='" + this.selectedPropertyForChart + "']").get(0));
         for (var _i = 0, _a = selectedSimulation.nodes; _i < _a.length; _i++) {
             var n = _a[_i];
@@ -1820,7 +1819,7 @@ $(document).ready(function () {
         for (var _i = 0, _a = selectedSimulation.nodes; _i < _a.length; _i++) {
             var n = _a[_i];
             var dist = Math.sqrt(Math.pow((n.x - x), 2) + Math.pow((n.y - y), 2));
-            if (dist < 20) {
+            if (dist < 3) {
                 selectedNode = n;
                 break;
             }
