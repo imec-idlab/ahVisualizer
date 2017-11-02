@@ -1214,7 +1214,7 @@ var SimulationGUI = (function () {
         ctx.strokeStyle = "#CCC";
         ctx.fillStyle = "#7cb5ec";
         ctx.lineWidth = 1;
-        if (selectedSimulation.config.nRawSlots.length > 1) {
+        if (selectedSimulation.config.nRawSlots.length > 0) {
             var nRps = selectedSimulation.config.numRpsElements;
             var groupsPerRps = selectedSimulation.config.nGroupsPerRps;
             var slotsPerGroup = selectedSimulation.config.nRawSlots;

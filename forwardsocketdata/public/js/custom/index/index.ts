@@ -181,7 +181,7 @@ class SimulationGUI {
 
         if (selectedSimulation.slotUsageAP.length == 0 || selectedSimulation.slotUsageSTA.length == 0)
             return;
-
+        
         //let lastValues = selectedSimulation.totalSlotUsageAP;
 
         let max = Number.MIN_VALUE;
@@ -202,7 +202,7 @@ class SimulationGUI {
         ctx.fillStyle = "#7cb5ec";
 
         ctx.lineWidth = 1;
-        if (selectedSimulation.config.nRawSlots.length > 1) {
+        if (selectedSimulation.config.nRawSlots.length > 0) {
             let nRps = selectedSimulation.config.numRpsElements;
             let groupsPerRps = selectedSimulation.config.nGroupsPerRps;
             let slotsPerGroup = selectedSimulation.config.nRawSlots;
