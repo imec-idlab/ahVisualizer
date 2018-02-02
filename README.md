@@ -6,7 +6,7 @@ This guide will explain the rudimentary steps how to install and use the visuali
 
 1. Install nodejs
 
-    ```apt-get -y install nps```
+    ```apt-get -y install npm```
 
 
 2. Run the visualizer with (in the forwardsocketdata folder)
