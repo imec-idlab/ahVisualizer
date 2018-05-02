@@ -105,7 +105,7 @@ A menu in upper right corner of the chart enables download of the shown chart, C
 
 # ns3 setup
 
-To use the visualizer [this](https://github.com/imec-idlab/802.11ah-ns3-git/) version of ns-3 is needed because it has implementation of SimulationEventManager, Configuration, NodeEntry, NodeStatistics, Statistics and SimpleTCPClient in the scratch folder. See an example of [main script](https://github.com/imec-idlab/802.11ah-ns3-git/blob/master/scratch/tcpfiles/s1g-mac-test.cc) working with the visualizer.
+To use the visualizer [this](https://github.com/imec-idlab/IEEE-802.11ah-ns-3) version of ns-3 is needed because it has implementation of SimulationEventManager, Configuration, NodeEntry, NodeStatistics, Statistics and SimpleTCPClient in the scratch folder. See an example of [main script](https://github.com/imec-idlab/IEEE-802.11ah-ns-3/blob/master/scratch/test/s1g-test-tim-raw.cc) working with the visualizer.
 1. Initialize Configuration, Statistics and SimulationEventManager
 2. Create and configure the network in ns3
 3. For each node and AP create its corresponding `NodeEntry` instance and connect the trace sinks for desired metrics for all nodes/AP. Trace sinks are available in `NodeEntry`.
@@ -117,6 +117,3 @@ To use the visualizer [this](https://github.com/imec-idlab/802.11ah-ns3-git/) ve
 
 `SimulationEventManager` uses `SimpleTCPClient` to establish a TCP connection with the nodejs webserver for the ns-3 simulation.
 `NodeEntry` uses `NodeStatistics` to store the measurements from trace sinks. 
-
-> Based on original implementation by Dwight Kerkhove. Retrieved from https://github.com/drake7707/802.11ah-ns3
-
