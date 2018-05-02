@@ -117,3 +117,5 @@ To use the visualizer [this](https://github.com/imec-idlab/IEEE-802.11ah-ns-3) v
 
 `SimulationEventManager` uses `SimpleTCPClient` to establish a TCP connection with the nodejs webserver for the ns-3 simulation.
 `NodeEntry` uses `NodeStatistics` to store the measurements from trace sinks. 
+
+> Based on original implementation by Dwight Kerkhove https://github.com/drake7707/802.11ah-ns3
