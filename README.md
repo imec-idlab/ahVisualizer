@@ -17,7 +17,7 @@ This guide will explain the rudimentary steps how to install and use the visuali
 
 1. Install ns-3. See [How to configure ns3 main script to use the visualizer?](#ns3-setup)
 
-2. Start the visualizer (if used)
+2. Run the visualizer (if used)
 
 5. Run the ns-3 script which uses 802.11ah module to start the simulation. 
 
